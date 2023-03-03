@@ -1,36 +1,35 @@
-// Define variables
-const pieces = document.querySelectorAll('.piece');
-const puzzle = document.querySelector('.puzzle');
-const originalText = document.querySelector('.original-text');
+const puzzleContainer = document.getElementById("puzzle-container");
+const puzzlePieces = document.querySelectorAll(".puzzle-piece");
 
-// Add event listeners to each piece
-pieces.forEach(piece => {
-  piece.addEventListener('click', () => {
-    // Replace the puzzle with a new one
-    puzzle.innerHTML = '';
-    const newPuzzle = createPuzzle(piece.textContent);
-    puzzle.appendChild(newPuzzle);
-
-    // Update the original text
-    originalText.textContent = piece.textContent;
+puzzlePieces.forEach((piece) => {
+  piece.style.backgroundImage = `url(${piece.dataset.src})`;
+  piece.addEventListener("click", () => {
+    zoomIn(piece);
   });
 });
 
-// Function to create a new puzzle
-function createPuzzle(text) {
-  const words = text.trim().split(' ');
-  const numPieces = words.length;
-
-  const puzzle = document.createElement('div');
-  puzzle.classList.add('puzzle');
-
-  // Create the puzzle pieces
-  for (let i = 0; i < numPieces; i++) {
-    const piece = document.createElement('div');
-    piece.classList.add('piece');
-    piece.textContent = words[i];
-    puzzle.appendChild(piece);
+function zoomIn(piece) {
+  puzzleContainer.classList.add("zoom-in");
+  puzzleContainer.innerHTML = "";
+  const title = document.createElement("h2");
+  title.textContent = piece.dataset.text;
+  puzzleContainer.appendChild(title);
+  const imageSrc = piece.dataset.src;
+  const imagePieces = 20; // number of puzzle pieces to create
+  const pieceWidth = 150 / Math.sqrt(imagePieces); // width of each piece
+  for (let i = 0; i < imagePieces; i++) {
+    for (let j = 0; j < imagePieces; j++) {
+      const newPiece = document.createElement("div");
+      newPiece.classList.add("puzzle-piece");
+      newPiece.style.width = pieceWidth + "px";
+      newPiece.style.height = pieceWidth + "px";
+      newPiece.style.backgroundImage = `url(${imageSrc})`;
+      newPiece.style.backgroundPosition = `-${pieceWidth * j}px -${pieceWidth * i}px`;
+      puzzleContainer.appendChild(newPiece);
+      newPiece.addEventListener("click", () => {
+        zoomIn(newPiece);
+      });
+    }
   }
-
-  return puzzle;
 }
+
